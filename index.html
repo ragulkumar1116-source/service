@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Service Engineer Smart Manager</title>
+  
+  <!-- PWA Meta Tags -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#3b82f6">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Smart Manager">
+  
+  <!-- CSS -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- App Header -->
+  <header id="app-header" style="display: none;">
+    <div class="brand">
+      <!-- SVG Wrench Logo -->
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path>
+      </svg>
+      <h1>Smart Manager</h1>
+    </div>
+    <div class="header-actions">
+      <!-- Sync Status Badge -->
+      <div id="sync-indicator" class="network-badge">
+        <span></span> <span id="sync-text">Checking</span>
+      </div>
+      <!-- User profile & Logout -->
+      <span id="header-user-name" class="muted-text" style="font-weight: 600; font-size: 0.8rem;">Engineer</span>
+    </div>
+  </header>
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav" id="app-nav" style="display: none;">
+    <a href="#dashboard" class="nav-item active" id="nav-dashboard">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="7" height="9" rx="1"></rect>
+        <rect x="14" y="3" width="7" height="5" rx="1"></rect>
+        <rect x="14" y="12" width="7" height="9" rx="1"></rect>
+        <rect x="3" y="16" width="7" height="5" rx="1"></rect>
+      </svg>
+      <span>Dashboard</span>
+    </a>
+    <a href="#tickets" class="nav-item" id="nav-tickets">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
+        <polyline points="14 2 14 8 20 8"></polyline>
+        <line x1="16" y1="13" x2="8" y2="13"></line>
+        <line x1="16" y1="17" x2="8" y2="17"></line>
+        <line x1="10" y1="9" x2="8" y2="9"></line>
+      </svg>
+      <span class="badge-count" id="badge-pending-tickets" style="display: none;">0</span>
+      <span>Requests</span>
+    </a>
+    <a href="#visits" class="nav-item" id="nav-visits">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+      </svg>
+      <span>Visits</span>
+    </a>
+    <a href="#customers" class="nav-item" id="nav-customers">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+        <circle cx="9" cy="7" r="4"></circle>
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+      </svg>
+      <span>Clients</span>
+    </a>
+    <a href="#reports" class="nav-item" id="nav-reports">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="20" x2="18" y2="10"></line>
+        <line x1="12" y1="20" x2="12" y2="4"></line>
+        <line x1="6" y1="20" x2="6" y2="14"></line>
+      </svg>
+      <span>Analytics</span>
+    </a>
+  </nav>
+
+  <!-- Main View Container -->
+  <main>
+
+    <!-- 1. LOGIN VIEW -->
+    <section id="view-login" class="view active">
+      <div class="login-container">
+        <div class="login-card">
+          <div class="login-header">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+            <h2>Service Manager</h2>
+            <p class="muted-text" style="margin-top: 4px;">Sign in to your account</p>
+          </div>
+          <form id="form-login">
+            <div class="form-group">
+              <label for="login-email">Email Address</label>
+              <input type="email" id="login-email" class="form-control" placeholder="engineer@smartmanager.com" required autocomplete="username">
+            </div>
+            <div class="form-group">
+              <label for="login-password">Password</label>
+              <input type="password" id="login-password" class="form-control" placeholder="••••••••" required autocomplete="current-password">
+            </div>
+            <div class="form-group" style="display: flex; align-items: center; gap: 8px; margin-top: -6px; margin-bottom: 18px;">
+              <input type="checkbox" id="login-remember" checked style="width: auto;">
+              <label for="login-remember" style="display: inline; margin: 0; font-size: 0.75rem; font-weight: 500;">Remember me</label>
+            </div>
+            <button type="submit" class="btn btn-primary" id="btn-login-submit">Login</button>
+          </form>
+          <div style="margin-top: 16px; text-align: center; font-size: 0.75rem; line-height: 1.4;" class="muted-text">
+            <span style="font-weight: 600;">Mock Credentials:</span><br>
+            Admin: admin@smartmanager.com / admin123<br>
+            Engineer: engineer@smartmanager.com / engineer123
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. DASHBOARD VIEW -->
+    <section id="view-dashboard" class="view">
+      <!-- Notifications Alert Panel -->
+      <h2 style="margin-top: 8px;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 20px;"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+        System Alerts
+      </h2>
+      <div id="dashboard-notifications" class="notification-container">
+        <!-- Dyn contents -->
+      </div>
+
+      <h2>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 20px;"><rect x="3" y="3" width="7" height="9" rx="1"></rect><rect x="14" y="3" width="7" height="5" rx="1"></rect><rect x="14" y="12" width="7" height="9" rx="1"></rect><rect x="3" y="16" width="7" height="5" rx="1"></rect></svg>
+        Today's Overview
+      </h2>
+      <div class="stat-grid">
+        <div class="stat-card">
+          <span class="value" id="stat-customers">0</span>
+          <span class="label">Total Customers</span>
+        </div>
+        <div class="stat-card accent-sec">
+          <span class="value" id="stat-instruments">0</span>
+          <span class="label">Total Instruments</span>
+        </div>
+        <div class="stat-card accent-red">
+          <span class="value" id="stat-pending-requests">0</span>
+          <span class="label">Pending Tickets</span>
+        </div>
+        <div class="stat-card accent-orange">
+          <span class="value" id="stat-open-complaints">0</span>
+          <span class="label">Open Complaints</span>
+        </div>
+        <div class="stat-card">
+          <span class="value" id="stat-today-visits">0</span>
+          <span class="label">Today's Visits</span>
+        </div>
+        <div class="stat-card accent-sec">
+          <span class="value" id="stat-month-visits">0</span>
+          <span class="label">Completed This Month</span>
+        </div>
+        <div class="stat-card accent-red">
+          <span class="value" id="stat-overdue-followups">0</span>
+          <span class="label">Overdue Follow-Ups</span>
+        </div>
+        <div class="stat-card accent-orange">
+          <span class="value" id="stat-amc-due">0</span>
+          <span class="label">AMC Due (30d)</span>
+        </div>
+        <div class="stat-card accent-yellow">
+          <span class="value" id="stat-calib-due">0</span>
+          <span class="label">Calibration Due</span>
+        </div>
+        <div class="stat-card accent-red">
+          <span class="value" id="stat-warranty-alerts">0</span>
+          <span class="label">Warranty Expired</span>
+        </div>
+      </div>
+
+      <!-- Quick Action Buttons -->
+      <div class="card" style="display: flex; gap: 8px;">
+        <button class="btn btn-primary btn-sm" onclick="App.openCreateTicketModal()">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width: 14px;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          New Ticket
+        </button>
+        <button class="btn btn-secondary btn-sm" onclick="App.openCreateVisitModal()">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width: 14px;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+          Log Visit
+        </button>
+        <button class="btn btn-secondary btn-sm" onclick="location.hash='#reports'">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width: 14px;"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+          Reports
+        </button>
+      </div>
+
+      <!-- Today's Follow ups / Tasks -->
+      <div class="card">
+        <h3>Tasks & Follow-ups Due Today</h3>
+        <div id="dashboard-followups" style="margin-top: 8px; display: flex; flex-direction: column; gap: 8px;">
+          <!-- Dyn loaded followups -->
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. SERVICE REQUESTS VIEW -->
+    <section id="view-tickets" class="view">
+      <div class="search-container">
+        <input type="text" id="ticket-search" class="form-control" placeholder="Search Request/Ticket...">
+        <button class="btn btn-primary" style="width: auto;" onclick="App.openCreateTicketModal()">Add</button>
+      </div>
+      <div class="tabs">
+        <span class="tab-btn active" id="ticket-tab-open" onclick="App.filterTickets('open')">Active</span>
+        <span class="tab-btn" id="ticket-tab-closed" onclick="App.filterTickets('closed')">Closed</span>
+        <span class="tab-btn" id="ticket-tab-all" onclick="App.filterTickets('all')">All</span>
+      </div>
+      <div class="card">
+        <div id="tickets-list">
+          <!-- Dyn content -->
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. VISITS HISTORY VIEW -->
+    <section id="view-visits" class="view">
+      <div class="search-container">
+        <input type="text" id="visit-search" class="form-control" placeholder="Search visits, spares...">
+        <button class="btn btn-primary" style="width: auto;" onclick="App.openCreateVisitModal()">Log Visit</button>
+      </div>
+      <div class="card">
+        <div id="visits-list">
+          <!-- Dyn visits log -->
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. CLIENTS / CUSTOMERS & INSTRUMENTS VIEW -->
+    <section id="view-customers" class="view">
+      <div class="tabs">
+        <span class="tab-btn active" id="cust-tab-list" onclick="App.switchCustSubTab('clients')">Customers</span>
+        <span class="tab-btn" id="cust-tab-instruments" onclick="App.switchCustSubTab('instruments')">Instruments</span>
+      </div>
+
+      <!-- Customers subtab -->
+      <div id="subtab-clients">
+        <div class="search-container">
+          <input type="text" id="customer-search" class="form-control" placeholder="Search customer, site...">
+          <button class="btn btn-primary" style="width: auto;" onclick="App.openCustomerModal()">Add</button>
+        </div>
+        <div id="customers-list">
+          <!-- Dyn list -->
+        </div>
+      </div>
+
+      <!-- Instruments subtab -->
+      <div id="subtab-instruments" style="display: none;">
+        <div class="search-container">
+          <input type="text" id="instrument-search" class="form-control" placeholder="Search serial/model...">
+          <button class="btn btn-primary" style="width: auto;" onclick="App.openInstrumentModal()">Add</button>
+        </div>
+        <div id="instruments-list">
+          <!-- Dyn list -->
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. ANALYTICS & REPORTS / SETTINGS VIEW -->
+    <section id="view-reports" class="view">
+      <div class="tabs">
+        <span class="tab-btn active" id="report-tab-gen" onclick="App.switchReportSubTab('reports')">Reports</span>
+        <span class="tab-btn" id="report-tab-settings" onclick="App.switchReportSubTab('settings')">Settings</span>
+      </div>
+
+      <div id="subtab-reports-content">
+        <h2>Generate System Report</h2>
+        <div class="card">
+          <div class="form-group">
+            <label for="report-select-type">Report Type</label>
+            <select id="report-select-type" class="form-control">
+              <option value="daily">Daily Service Summary (Today)</option>
+              <option value="monthly">Monthly Service Summary (This Month)</option>
+              <option value="amc">AMC Due Report (Next 30 Days)</option>
+              <option value="complaints">Open Complaint Report</option>
+              <option value="completed">Completed Visit Report (Month)</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" onclick="App.generateReport()">Generate Report</button>
+        </div>
+
+        <div id="report-result-card" class="card" style="display: none;">
+          <div class="flex-row-spaced" style="border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+            <h3 id="report-title">Report Title</h3>
+            <button class="btn btn-secondary btn-sm" style="width: auto;" id="btn-export-report">Export CSV</button>
+          </div>
+          <div id="report-results" style="margin-top: 12px; max-height: 250px; overflow-y: auto;">
+            <!-- dyn rows -->
+          </div>
+        </div>
+      </div>
+
+      <div id="subtab-settings-content" style="display: none;">
+        <h2>System Settings</h2>
+        
+        <!-- Theme selection -->
+        <div class="card">
+          <h3>Display Settings</h3>
+          <div class="form-group" style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
+            <label for="settings-theme-toggle" style="margin: 0;">Enable Light Theme</label>
+            <input type="checkbox" id="settings-theme-toggle" style="width: 24px; height: 24px;" onchange="App.toggleTheme(this.checked)">
+          </div>
+        </div>
+
+        <!-- Role management -->
+        <div class="card">
+          <h3>User Role Management</h3>
+          <div class="form-group">
+            <label for="settings-role-select">Select Simulation Role</label>
+            <select id="settings-role-select" class="form-control" onchange="App.updateSimulatedRole(this.value)">
+              <option value="engineer">Service Engineer</option>
+              <option value="admin">Admin / Supervisor</option>
+            </select>
+            <p class="muted-text" style="margin-top: 6px;">Admins can perform backup imports/exports and view supervisors statistics.</p>
+          </div>
+        </div>
+
+        <!-- Firebase Config Setup -->
+        <div class="card">
+          <h3>Firebase Connection Config</h3>
+          <p class="muted-text" style="margin-bottom: 12px;">Add your Firebase database configuration to sync offline mutations to the cloud.</p>
+          
+          <form id="form-firebase-config">
+            <div class="form-group">
+              <label for="fb-api-key">API Key</label>
+              <input type="text" id="fb-api-key" class="form-control" placeholder="AIzaSy...">
+            </div>
+            <div class="form-group">
+              <label for="fb-db-url">Database URL</label>
+              <input type="text" id="fb-db-url" class="form-control" placeholder="https://[project-id]-default-rtdb.firebaseio.com">
+            </div>
+            <div class="form-group">
+              <label for="fb-auth-domain">Auth Domain</label>
+              <input type="text" id="fb-auth-domain" class="form-control" placeholder="[project-id].firebaseapp.com">
+            </div>
+            <div class="form-group">
+              <label for="fb-project-id">Project ID</label>
+              <input type="text" id="fb-project-id" class="form-control" placeholder="[project-id]">
+            </div>
+            <div style="display: flex; gap: 8px; margin-top: 14px;">
+              <button type="submit" class="btn btn-primary">Connect</button>
+              <button type="button" class="btn btn-secondary" onclick="App.disconnectFirebase()">Disconnect</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Cloud backup/Restore -->
+        <div class="card">
+          <h3>Data Backup (JSON)</h3>
+          <p class="muted-text" style="margin-bottom: 12px;">Export all local tables to a JSON backup file, or upload an existing backup.</p>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <button class="btn btn-secondary" onclick="App.exportBackup()">Export Database Backup</button>
+            
+            <div style="margin-top: 8px;">
+              <label class="btn btn-secondary" style="display: flex;">
+                Import Database Backup
+                <input type="file" id="backup-file-input" style="display: none;" onchange="App.importBackup(event)">
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Logout -->
+        <button class="btn btn-danger" onclick="App.handleLogout()">Logout Account</button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==================== MODALS ==================== -->
+
+  <!-- 1. TICKET CREATE / DETAIL MODAL -->
+  <div class="modal-overlay" id="modal-ticket">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="ticket-modal-title">New Service Request</h3>
+        <span class="modal-close" onclick="App.closeModal('modal-ticket')">✕</span>
+      </div>
+      <!-- View Detail panel (default hidden) -->
+      <div id="ticket-modal-detail" style="display: none;">
+        <div class="card" style="padding: 10px; margin-bottom: 12px;">
+          <div class="detail-row"><span>Ticket No</span><span id="dtl-tkt-no"></span></div>
+          <div class="detail-row"><span>Status</span><span id="dtl-tkt-status"></span></div>
+          <div class="detail-row"><span>Priority</span><span id="dtl-tkt-priority"></span></div>
+          <div class="detail-row"><span>Customer</span><span id="dtl-tkt-cust"></span></div>
+          <div class="detail-row"><span>Instrument</span><span id="dtl-tkt-inst"></span></div>
+          <div class="detail-row"><span>Type</span><span id="dtl-tkt-type"></span></div>
+          <div class="detail-row"><span>Date Created</span><span id="dtl-tkt-date"></span></div>
+        </div>
+        <p style="font-size: 0.85rem; font-weight: 500; margin-bottom: 12px;" id="dtl-tkt-desc"></p>
+        
+        <!-- Quick State edit for service engineer -->
+        <div class="form-group">
+          <label for="detail-tkt-status-select">Update Ticket Status</label>
+          <select id="detail-tkt-status-select" class="form-control" onchange="App.updateTicketStatusFromDetail()">
+            <option value="New">New</option>
+            <option value="Assigned">Assigned</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Waiting for Customer Reply">Waiting for Customer Reply</option>
+            <option value="Waiting for Spare Parts">Waiting for Spare Parts</option>
+            <option value="Completed">Completed</option>
+            <option value="Closed">Closed</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" id="btn-dtl-log-visit" style="margin-top: 8px;">Log Visit for this Ticket</button>
+      </div>
+
+      <!-- Create Ticket form -->
+      <form id="form-ticket">
+        <div class="form-group">
+          <label for="tkt-cust-id">Customer Name</label>
+          <select id="tkt-cust-id" class="form-control" required onchange="App.handleTicketCustomerChange(this.value)">
+            <!-- filled dyn -->
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="tkt-inst-id">Instrument Name</label>
+          <select id="tkt-inst-id" class="form-control" required>
+            <!-- filled dyn based on cust -->
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="tkt-type">Request Type</label>
+          <select id="tkt-type" class="form-control" required>
+            <option value="Breakdown">Breakdown</option>
+            <option value="AMC Request">AMC Request</option>
+            <option value="Calibration Request">Calibration Request</option>
+            <option value="Spare Requirement">Spare Requirement</option>
+            <option value="Technical Support">Technical Support</option>
+            <option value="Installation">Installation</option>
+            <option value="General Inquiry">General Inquiry</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="tkt-desc">Problem Description</label>
+          <textarea id="tkt-desc" rows="3" class="form-control" placeholder="Details of the issue..." required></textarea>
+        </div>
+        <div class="form-group">
+          <label for="tkt-priority">Priority</label>
+          <select id="tkt-priority" class="form-control" required>
+            <option value="Low">Low</option>
+            <option value="Medium" selected>Medium</option>
+            <option value="High">High</option>
+            <option value="Critical">Critical</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="tkt-reminder">Reminder Frequency</label>
+          <select id="tkt-reminder" class="form-control">
+            <option value="Daily Reminder">Daily Reminder</option>
+            <option value="Weekly Reminder">Weekly Reminder</option>
+            <option value="Monthly Reminder">Monthly Reminder</option>
+            <option value="Custom Date Reminder">Custom Date Reminder</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary" style="margin-top: 8px;">Create Service Request</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 2. VISIT ENTRY MODAL -->
+  <div class="modal-overlay" id="modal-visit">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="visit-modal-title">Log Visit</h3>
+        <span class="modal-close" onclick="App.closeModal('modal-visit')">✕</span>
+      </div>
+      
+      <form id="form-visit">
+        <!-- Linked Ticket, optional -->
+        <div class="form-group">
+          <label for="visit-tkt-id">Linked Request Ticket (Optional)</label>
+          <select id="visit-tkt-id" class="form-control" onchange="App.handleVisitTicketChange(this.value)">
+            <!-- filled dyn -->
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="visit-cust-id">Customer Name</label>
+          <select id="visit-cust-id" class="form-control" required onchange="App.handleVisitCustomerChange(this.value)">
+            <!-- filled dyn -->
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="visit-inst-id">Instrument Name</label>
+          <select id="visit-inst-id" class="form-control" required>
+            <!-- filled dyn based on cust -->
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="visit-type">Visit Type</label>
+          <select id="visit-type" class="form-control" required>
+            <option value="AMC Visit">AMC Visit</option>
+            <option value="Breakdown Visit">Breakdown Visit</option>
+            <option value="Installation Visit">Installation Visit</option>
+            <option value="Calibration Visit">Calibration Visit</option>
+            <option value="Emergency Visit">Emergency Visit</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="visit-date">Visit Date</label>
+          <input type="date" id="visit-date" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+          <label for="visit-performed">Work Performed</label>
+          <textarea id="visit-performed" rows="2" class="form-control" placeholder="What actions were taken..." required></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label for="visit-obs">Observations</label>
+          <textarea id="visit-obs" rows="2" class="form-control" placeholder="Parameters, findings..." required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="visit-corrective">Corrective Actions</label>
+          <textarea id="visit-corrective" rows="2" class="form-control" placeholder="Fixes applied..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="visit-spares">Spare Parts Used</label>
+          <input type="text" id="visit-spares" class="form-control" placeholder="Part numbers, quantities...">
+        </div>
+
+        <div class="form-group">
+          <label for="visit-status">System Status</label>
+          <select id="visit-status" class="form-control">
+            <option value="Operational">Operational</option>
+            <option value="Partially Operational">Partially Operational</option>
+            <option value="Down">Down / Non-Operational</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="visit-next-date">Next Visit Date (Follow-up)</label>
+          <input type="date" id="visit-next-date" class="form-control">
+        </div>
+
+        <div class="form-group">
+          <label for="visit-remarks">Engineer Remarks</label>
+          <textarea id="visit-remarks" rows="2" class="form-control" placeholder="General comments..."></textarea>
+        </div>
+
+        <div class="form-group" id="visit-close-ticket-group" style="display: none; align-items: center; gap: 8px; margin-top: 10px;">
+          <input type="checkbox" id="visit-close-ticket" style="width: auto;" checked>
+          <label for="visit-close-ticket" style="display: inline; margin: 0; font-size: 0.8rem; font-weight: 600;">Complete and Close the Linked Ticket</label>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="margin-top: 14px;">Save Visit Report</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 3. CUSTOMER MODAL -->
+  <div class="modal-overlay" id="modal-customer">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="customer-modal-title">New Client Profile</h3>
+        <span class="modal-close" onclick="App.closeModal('modal-customer')">✕</span>
+      </div>
+
+      <!-- View Detail panel (default hidden) -->
+      <div id="customer-modal-detail" style="display: none;">
+        <div class="card" style="padding: 10px; margin-bottom: 12px;">
+          <div class="detail-row"><span>Company</span><span id="dtl-cust-comp"></span></div>
+          <div class="detail-row"><span>Address</span><span id="dtl-cust-addr" style="font-size: 0.75rem;"></span></div>
+          <div class="detail-row"><span>Contact Person</span><span id="dtl-cust-person"></span></div>
+          <div class="detail-row"><span>Mobile</span><span id="dtl-cust-mobile"></span></div>
+          <div class="detail-row"><span>Email</span><span id="dtl-cust-email"></span></div>
+          <div class="detail-row"><span>GST Number</span><span id="dtl-cust-gst"></span></div>
+        </div>
+        <div style="font-size: 0.8rem; margin-bottom: 14px;">
+          <strong>Notes: </strong> <span id="dtl-cust-notes"></span>
+        </div>
+        
+        <!-- History Logs tabs inside customer details -->
+        <h3 style="border-top: 1px solid var(--border-color); padding-top: 12px; margin-bottom: 8px;">Service & Visit History</h3>
+        <div class="timeline" id="customer-history-timeline">
+          <!-- loaded dyn -->
+        </div>
+      </div>
+
+      <!-- Create customer form -->
+      <form id="form-customer">
+        <input type="hidden" id="cust-id">
+        <div class="form-group">
+          <label for="cust-name">Customer Name (Lab/Dept)</label>
+          <input type="text" id="cust-name" class="form-control" required placeholder="Hematology Lab, Dept of Medicine">
+        </div>
+        <div class="form-group">
+          <label for="cust-company">Company Name</label>
+          <input type="text" id="cust-company" class="form-control" required placeholder="City General Hospital">
+        </div>
+        <div class="form-group">
+          <label for="cust-address">Site Address</label>
+          <textarea id="cust-address" rows="2" class="form-control" required placeholder="Room 402, 4th Floor..."></textarea>
+        </div>
+        <div class="form-group">
+          <label for="cust-person">Contact Person</label>
+          <input type="text" id="cust-person" class="form-control" required placeholder="Dr. John Doe">
+        </div>
+        <div class="form-group">
+          <label for="cust-mobile">Mobile Number</label>
+          <input type="tel" id="cust-mobile" class="form-control" required placeholder="+91 99000 88000">
+        </div>
+        <div class="form-group">
+          <label for="cust-email">Email Address</label>
+          <input type="email" id="cust-email" class="form-control" required placeholder="john.doe@hospital.com">
+        </div>
+        <div class="form-group">
+          <label for="cust-gst">GST Number</label>
+          <input type="text" id="cust-gst" class="form-control" placeholder="22AAAAA1111A1Z1">
+        </div>
+        <div class="form-group">
+          <label for="cust-notes">Remarks / Notes</label>
+          <textarea id="cust-notes" rows="2" class="form-control" placeholder="Any access codes, entry requirements..."></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary" style="margin-top: 8px;">Save Customer</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 4. INSTRUMENT MODAL -->
+  <div class="modal-overlay" id="modal-instrument">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>New Instrument Mapping</h3>
+        <span class="modal-close" onclick="App.closeModal('modal-instrument')">✕</span>
+      </div>
+
+      <form id="form-instrument">
+        <div class="form-group">
+          <label for="inst-cust-mapping">Customer Mapping</label>
+          <select id="inst-cust-mapping" class="form-control" required>
+            <!-- loaded dyn -->
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="inst-name">Instrument Name</label>
+          <input type="text" id="inst-name" class="form-control" required placeholder="Biosafety Cabinet Class II">
+        </div>
+        <div class="form-group">
+          <label for="inst-model">Model Number</label>
+          <input type="text" id="inst-model" class="form-control" required placeholder="BSC-4A2">
+        </div>
+        <div class="form-group">
+          <label for="inst-serial">Serial Number</label>
+          <input type="text" id="inst-serial" class="form-control" required placeholder="SN-2026-9908">
+        </div>
+        <div class="form-group">
+          <label for="inst-install-date">Installation Date</label>
+          <input type="date" id="inst-install-date" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label for="inst-warranty-date">Warranty Expiry Date</label>
+          <input type="date" id="inst-warranty-date" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label for="inst-amc-start">AMC Contract Start</label>
+          <input type="date" id="inst-amc-start" class="form-control">
+        </div>
+        <div class="form-group">
+          <label for="inst-amc-end">AMC Contract End</label>
+          <input type="date" id="inst-amc-end" class="form-control">
+        </div>
+        <div class="form-group">
+          <label for="inst-calib-date">Next Calibration Due Date</label>
+          <input type="date" id="inst-calib-date" class="form-control">
+        </div>
+        <button type="submit" class="btn btn-primary" style="margin-top: 8px;">Save Instrument</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Dynamic floating action button (quick ticket) -->
+  <div class="fab" onclick="App.openCreateTicketModal()" id="quick-fab" style="display: none;">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="12" y1="5" x2="12" y2="19"></line>
+      <line x1="5" y1="12" x2="19" y2="12"></line>
+    </svg>
+  </div>
+
+  <!-- Firebase Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+  <!-- App Custom Logic -->
+  <script src="js/utils.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/db.js"></script>
+  <script src="js/app.js"></script>
+  
+  <!-- Register PWA Service Worker -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+          .then((reg) => console.log('Service Worker registered successfully!', reg.scope))
+          .catch((err) => console.log('Service worker registration failed: ', err));
+      });
+    }
+  </script>
+</body>
+</html>
